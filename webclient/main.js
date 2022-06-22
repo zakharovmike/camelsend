@@ -8,6 +8,7 @@ const hostname = "localhost:8000";
 
 let serverConnection = null;
 let peerConnection = null;
+let peerConnectionOccupied = false;
 let rx = null;
 let tx = null;
 let rallyCounter = 0;
@@ -83,6 +84,9 @@ function connectToServer() {
 
       case "connection-offer":
         (async () => {
+          // Prevent peer connection hijacking if a peer connection is already in progress
+          if (peerConnectionOccupied === true) return;
+
           rx = peerConnection.createDataChannel("pipe");
           rx.onmessage = (e) => {
             const msg = JSON.parse(e.data).m;
@@ -154,6 +158,10 @@ function createPeerConnection() {
       case "failed":
       case "disconnected":
         addToActivityLog("Peer connection closed/failed/disconnected :(");
+        break;
+
+      case "connected":
+        peerConnectionOccupied = true;
         break;
     }
   };
