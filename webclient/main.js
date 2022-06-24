@@ -1,8 +1,10 @@
 /**
  * Copyright © 2022 Mike Zakharov
- * 
+ *
  * Licensed under the GNU AGPLv3 (https://www.gnu.org/licenses/agpl-3.0.html)
  */
+
+import * as ui from "./ui.js";
 
 const hostname = "localhost:8000";
 
@@ -14,29 +16,19 @@ let tx = null;
 let rallyCounter = 0;
 
 const id = document.getElementById("id").innerText;
-let to;
-let from;
-
-const activityLog = document.getElementById("log");
-function addToActivityLog(msg) {
-  const span = document.createElement("span");
-  span.innerHTML = msg;
-  activityLog.appendChild(span);
-  activityLog.appendChild(document.createElement("br"));
-  window.scrollTo(0, document.body.scrollHeight);
-}
+let peerId;
 
 const form = document.querySelector(".form");
 form.addEventListener("submit", (e) => {
   e.preventDefault();
 
   const formData = new FormData(form);
-  to = formData.get("peer-id");
+  peerId = formData.get("peer-id");
 
   rx = peerConnection.createDataChannel("pipe");
   rx.onmessage = (e) => {
     const msg = JSON.parse(e.data).m;
-    addToActivityLog(msg);
+    console.log(msg);
 
     setTimeout(() => {
       tx.send(JSON.stringify({ m: `Ping ${rallyCounter++} from ${id}` }));
@@ -54,11 +46,16 @@ function connectToServer() {
 
   // Handle a WebSocket timeout from axe-happy browsers (ehm, Firefox) by reconnecting again
   serverConnection.onclose = () => {
+    console.log("Disconnected from signaling server.");
+    ui.toggleServerConnectionStatusOff();
+
     connectToServer();
   };
 
   serverConnection.onopen = () => {
-    addToActivityLog("Connected to signaling server.");
+    console.log("Connected to signaling server.");
+    ui.toggleServerConnectionStatusOn();
+
     serverConnection.send(
       JSON.stringify({ type: "register-connection", id: id }),
     );
@@ -90,7 +87,7 @@ function connectToServer() {
           rx = peerConnection.createDataChannel("pipe");
           rx.onmessage = (e) => {
             const msg = JSON.parse(e.data).m;
-            addToActivityLog(msg);
+            console.log(msg);
 
             setTimeout(() => {
               tx.send(
@@ -105,14 +102,17 @@ function connectToServer() {
             await peerConnection.createAnswer(),
           );
 
-          from = msg.from;
+          peerId = msg.from;
           serverConnection.send(
             JSON.stringify({
               type: "connection-answer",
-              to: from,
+              to: peerId,
               sdp: peerConnection.localDescription,
             }),
           );
+
+          ui.togglePeerConnectionStatusRedLed("on");
+          ui.setConnectionStatusPeerId(peerId);
         })();
         break;
 
@@ -146,7 +146,7 @@ function createPeerConnection() {
     serverConnection.send(
       JSON.stringify({
         type: "new-ice-candidate",
-        to: to ? to : from,
+        to: peerId,
         candidate: e.candidate,
       }),
     );
@@ -157,10 +157,14 @@ function createPeerConnection() {
       case "closed":
       case "failed":
       case "disconnected":
-        addToActivityLog("Peer connection closed/failed/disconnected :(");
+        ui.togglePeerConnectionStatusGreenLed("off");
+        ui.togglePeerConnectionStatusRedLed("on");
+        console.log("Peer connection closed/failed/disconnected :(");
         break;
 
       case "connected":
+        ui.togglePeerConnectionStatusRedLed("off");
+        ui.togglePeerConnectionStatusGreenLed("on");
         peerConnectionOccupied = true;
         break;
     }
@@ -174,11 +178,14 @@ function createPeerConnection() {
       serverConnection.send(
         JSON.stringify({
           type: "connection-offer",
-          to: to,
+          to: peerId,
           from: id,
           sdp: peerConnection.localDescription,
         }),
       );
+
+      ui.togglePeerConnectionStatusRedLed("on");
+      ui.setConnectionStatusPeerId(peerId);
     } catch (err) {
       console.error("negotiation-needed: ", err);
     }

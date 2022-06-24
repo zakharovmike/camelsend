@@ -1,30 +1,115 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Camelsend</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
-    <h1>Camelsend</h1>
-    <p>Hello,</p>
+  <head>
+    <meta charset="UTF-8" />
 
-    <p id="id">{{xxx}}</p>
+    <title>Camelsend</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div id="header">
+      <h1>CAMELSEND</h1>
+      <h2>≡express</h2>
+      <p>Send large files directly over the Internet.</p>
+    </div>
+
+    <div id="instructions">
+      <h2>Instructions</h2>
+      <ul>
+        <li>If you want to send a file:</li>
+        <ol>
+          <li>
+            On the Transfer Sheet below, choose the file you want to send, field
+            (c), by pressing the "Choose file" button.
+          </li>
+          <li>Let the other person know your name, found in field (a).</li>
+          <li>Press "Sign and submit" to start the transfer.</li>
+        </ol>
+
+        <br />
+
+        <li>If you want to receive a file:</li>
+        <ol>
+          <li>
+            On the Transfer Sheet below, enter the name given to you by the
+            other person in field (b).
+          </li>
+          <li>Press "Sign and submit" to start the transfer.</li>
+        </ol>
+      </ul>
+    </div>
 
     <form class="form">
-        <input type="text" name="peer-id" placeholder="Connect to...">
-        <button type="submit">Connect</button>
+      <div id="transfer-sheet" class="sheet">
+        <h2>Transfer Sheet</h2>
+
+        <div class="transfer-sheet-item">
+          You are: (a) <b><span id="id">{{xxx}}</span></b>
+        </div>
+
+        <div id="peer-input" class="transfer-sheet-item">
+          <label for="peer-id-input">They are: (b) </label>
+          <input
+            type="text"
+            id="peer-id-input"
+            class="underdotted"
+            name="peer-id"
+            placeholder="Their name"
+          />
+        </div>
+
+        <div id="file-upload" class="transfer-sheet-item">
+          <div>You want to send: (c)</div>
+          <div id="file-name" class="file-name underdotted">&nbsp;</div>
+          <label class="button" for="file-input" tabindex="0"
+            >Choose file</label
+          >
+          <input type="file" id="file-input" name="file" />
+        </div>
+
+        <button class="button" type="submit">Sign and submit</button>
+
+        <div class="sheet-shadow"></div>
+      </div>
     </form>
 
-    <h2>Activity Log</h2>
-    <p id="log"></p>
+    <div id="connection-monitor">
+      <div class="connection-status">
+        <div class="status-led red-led-on"></div>
+        <div class="status-led"></div>
+        <div>Connection to Central Dispatch</div>
+      </div>
 
-    <br />
-    <br />
-    <br />
-    <p>Copyright © 2022 Mike Zakharov</p>
-    <p>Licensed under the <a target="_blank" rel="noopener noreferrer" href="https://www.gnu.org/licenses/agpl-3.0.html">GNU AGPLv3</a></p>
+      <div class="connection-status">
+        <div class="status-led"></div>
+        <div class="status-led"></div>
+        <div>
+          Connection to
+          <span id="peer-id-connection-status">...</span>
+        </div>
+      </div>
+    </div>
 
+    <div id="package-tracking">
+      <h2>Package Tracking</h2>
+    </div>
+
+    <div class="spacer"></div>
+
+    <div id="footer">
+      <p>Copyright © 2022 Mike Zakharov</p>
+      <p>
+        Licensed under the
+        <a
+          target="_blank"
+          rel="noopener noreferrer"
+          href="https://www.gnu.org/licenses/agpl-3.0.html"
+          >GNU AGPLv3</a
+        >
+      </p>
+    </div>
+
+    <script type="module" src="ui.js"></script>
     <script type="module" src="main.js"></script>
-</body>
+  </body>
 </html>

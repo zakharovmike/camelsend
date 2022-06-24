@@ -3,3 +3,388 @@
  * 
  * Licensed under the GNU AGPLv3 (https://www.gnu.org/licenses/agpl-3.0.html)
  */
+
+html {
+  font-family: "Courier New", Courier, monospace;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Header ============================= */
+
+#header {
+  display: inherit;
+  flex-direction: inherit;
+  align-items: inherit;
+}
+
+#header > h1 {
+  margin-bottom: 0;
+}
+
+#header > h2 {
+  margin-top: 0;
+  margin-left: 6em;
+  font-style: oblique;
+}
+
+#header > p {
+  margin: 0;
+}
+
+/* Instructions ======================= */
+
+#instructions {
+  display: inherit;
+  flex-direction: inherit;
+  width: 720px;
+  margin-top: 1em;
+}
+
+#instructions > h2 {
+  align-self: center;
+  margin-bottom: 0;
+}
+
+#instructions > ul {
+  line-height: 1;
+}
+
+#instructions > ul > li {
+  margin-bottom: 0.7em;
+  font-weight: bold;
+}
+
+#instructions > ul > ol {
+  line-height: 2;
+}
+
+#instructions > ul > ol > li {
+  margin-bottom: 0.7em;
+}
+
+/* Sheet (general) ==================== */
+
+.sheet {
+  display: flex;
+  position: relative;
+  width: 720px;
+  background-color: white;
+  border: 4px double black;
+}
+
+.sheet-shadow {
+  position: absolute;
+  z-index: -1;
+  top: 8px;
+  left: 8px;
+  width: 100%;
+  height: 100%;
+  background-color: black;
+}
+
+/* Transfer Sheet ===================== */
+
+#transfer-sheet {
+  flex-direction: column;
+  padding: 0 1.5em 1.5em 1.5em;
+}
+
+#transfer-sheet > h2 {
+  align-self: center;
+  margin-bottom: 0;
+}
+
+#transfer-sheet > .transfer-sheet-item {
+  margin: 0;
+  margin-top: 1em;
+}
+
+#transfer-sheet > button {
+  margin-top: 1em;
+}
+
+#transfer-sheet > #peer-input {
+  display: inline-flex;
+  align-items: center;
+  margin-top: 1.5em;
+}
+
+#transfer-sheet > #peer-input > label {
+  margin-right: 1em;
+  white-space: nowrap;
+}
+
+#transfer-sheet > #peer-input > input {
+  all: unset;
+  width: 100%;
+  overflow: hidden;
+}
+
+#transfer-sheet > #file-upload {
+  display: inline-flex;
+  align-content: space-between;
+  align-items: center;
+}
+
+#transfer-sheet > #file-upload > div {
+  margin: 0;
+  margin-right: 1em;
+  white-space: nowrap;
+}
+
+#transfer-sheet > #file-upload > #file-name {
+  width: 100%;
+}
+
+#transfer-sheet > #file-upload > #file-input {
+  display: none;
+}
+
+/* Connection Monitor ================= */
+
+#connection-monitor {
+  margin-top: 2em;
+}
+
+#connection-monitor > .connection-status {
+  display: flex;
+  align-items: center;
+}
+
+.status-led {
+  margin-right: 8px;
+  top: 2px;
+  width: 12px;
+  height: 12px;
+  background-color: rgb(220, 220, 220);
+  border-radius: 50%;
+}
+
+.red-led-on {
+  background-color: rgb(255, 70, 70);
+  box-shadow: 0 0 4px rgb(255, 70, 70);
+}
+
+.green-led-on {
+  background-color: rgb(0, 200, 0);
+  box-shadow: 0 0 4px rgb(0, 200, 0);
+}
+
+/* Package Tracking =================== */
+
+#package-tracking {
+  display: inherit;
+  flex-direction: inherit;
+  margin-top: 1em;
+}
+
+#package-tracking > h2 {
+  align-self: center;
+  margin-bottom: 0.5em;
+}
+
+#package-tracking > .tracking-sheet-wrapper {
+  position: relative;
+}
+
+#package-tracking > .tracking-sheet-wrapper > .tracking-sheet {
+  flex-direction: row;
+  align-items: center;
+  margin-bottom: 1em;
+  height: 32px;
+  padding: 1em;
+}
+
+#package-tracking > .tracking-sheet-wrapper > .tracking-sheet > * {
+  margin: 0;
+  white-space: nowrap;
+}
+
+#package-tracking
+  > .tracking-sheet-wrapper
+  > .tracking-sheet
+  > .tracking-to-arrow {
+  margin: 0 0.5em 0 0.5em;
+  font-size: 2em;
+  line-height: 0.5;
+}
+
+#package-tracking
+  > .tracking-sheet-wrapper
+  > .tracking-sheet
+  > .package-status {
+  display: inherit;
+  margin-left: auto;
+}
+
+#package-tracking
+  > .tracking-sheet-wrapper
+  > .tracking-sheet
+  > .package-status
+  > div {
+  margin: 0;
+  margin-left: 0.5em;
+  color: rgb(0, 200, 0);
+}
+
+#package-tracking
+  > .tracking-sheet-wrapper
+  > .tracking-sheet
+  > .tracking-sheet-button {
+  margin-left: auto;
+}
+
+#package-tracking
+  > .tracking-sheet-wrapper
+  > .tracking-sheet
+  > .tracking-sheet-button
+  > button {
+  margin-left: 1em;
+}
+
+#package-tracking > .tracking-sheet-wrapper > .confirmation-prompt {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  position: absolute;
+  z-index: 3;
+  margin-top: -1em;
+  left: 3px;
+  width: 720px;
+  padding: 1em;
+  background-color: rgb(255, 255, 70);
+  border-bottom: 2px solid rgb(200, 200, 0);
+  border-right: 2px solid rgb(200, 200, 0);
+}
+
+#package-tracking > .tracking-sheet-wrapper > .confirmation-prompt::after {
+  position: absolute;
+  top: -1em;
+  left: 344px;
+  width: 0;
+  height: 0;
+  content: "";
+  border-left: 1em solid transparent;
+  border-right: 1em solid transparent;
+  border-bottom: 1em solid rgb(255, 255, 70);
+}
+
+#package-tracking > .tracking-sheet-wrapper > .confirmation-prompt > div {
+  margin-left: auto;
+}
+
+#package-tracking
+  > .tracking-sheet-wrapper
+  > .confirmation-prompt
+  > div
+  > button {
+  margin-left: 1em;
+  padding: 0 7px 0 7px;
+  font-size: 1em;
+  color: white;
+}
+
+#package-tracking
+  > .tracking-sheet-wrapper
+  > .confirmation-prompt
+  > div
+  > button.button-reject {
+  background-color: rgb(255, 70, 70);
+}
+
+#package-tracking
+  > .tracking-sheet-wrapper
+  > .confirmation-prompt
+  > div
+  > button.button-reject:hover {
+  background-color: rgb(240, 70, 70);
+}
+
+#package-tracking
+  > .tracking-sheet-wrapper
+  > .confirmation-prompt
+  > div
+  > button.button-reject:active {
+  background-color: rgb(225, 70, 70);
+}
+
+#package-tracking
+  > .tracking-sheet-wrapper
+  > .confirmation-prompt
+  > div
+  > button.button-accept {
+  background-color: rgb(0, 200, 0);
+}
+
+#package-tracking
+  > .tracking-sheet-wrapper
+  > .confirmation-prompt
+  > div
+  > button.button-accept:hover {
+  background-color: rgb(0, 185, 0);
+}
+
+#package-tracking
+  > .tracking-sheet-wrapper
+  > .confirmation-prompt
+  > div
+  > button.button-accept:active {
+  background-color: rgb(0, 170, 0);
+}
+
+/* General ============================ */
+
+.button {
+  all: unset;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 4px;
+  padding-bottom: 2px;
+
+  border-top: 2px dotted black;
+  border-left: 2px dotted black;
+
+  border-right: 2px solid black;
+  border-bottom: 2px solid black;
+
+  border-radius: 4px;
+  font-family: inherit;
+  font-size: inherit;
+  white-space: nowrap;
+  user-select: none;
+}
+
+.button:hover {
+  background-color: rgb(230, 230, 230);
+}
+
+.button:active {
+  border-top: 2px solid black;
+  border-left: 2px solid black;
+
+  border-right: 2px dotted black;
+  border-bottom: 2px dotted black;
+
+  background-color: rgb(210, 210, 210);
+}
+
+.file-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.underdotted {
+  border-bottom: 2px dotted black !important;
+}
+
+.spacer {
+  height: 56px;
+}
