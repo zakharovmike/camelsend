@@ -246,6 +246,14 @@ body {
   > .tracking-sheet-wrapper
   > .tracking-sheet
   > .tracking-sheet-button
+  > a {
+  all: unset;
+}
+
+#package-tracking
+  > .tracking-sheet-wrapper
+  > .tracking-sheet
+  > .tracking-sheet-button
   > button {
   margin-left: 1em;
 }

@@ -76,14 +76,12 @@ export function setConnectionStatusPeerId(peerId) {
   statusPeerId.innerText = peerId.toUpperCase();
 }
 
-function addSendingTrackingSheet(filename, peerId) {
+export function addSendingTrackingSheet(filename) {
   // <div class="tracking-sheet-wrapper">
   //   <div class="sheet tracking-sheet">
-  //     <div class="file-name">
-  //       {{filename}}
-  //     </div>
+  //     <div class="file-name">{{filename}}</div>
   //     <div class="tracking-to-arrow">→</div>
-  //     <div id="tracking-peed-id">{{peerId}}</div>
+  //     <div id="tracking-peed-id">...</div>
   //     <div class="package-status">
   //       <div>Packing</div>
   //       <div><span>0</span>%</div>
@@ -108,7 +106,7 @@ function addSendingTrackingSheet(filename, peerId) {
 
   const peer = document.createElement("div");
   peer.setAttribute("id", "tracking-peer-id");
-  peer.innerText = peerId;
+  peer.innerText = "...";
 
   const status = document.createElement("div");
   status.setAttribute("class", "package-status");
@@ -143,12 +141,12 @@ function addSendingTrackingSheet(filename, peerId) {
   packageTracker.appendChild(trackingSheetWrapper);
 }
 
-function addReceivingTrackingSheet(peerId, filename) {
+export function addReceivingTrackingSheet(peerId) {
   // <div class="tracking-sheet-wrapper">
   //   <div class="sheet tracking-sheet">
   //     <div id="tracking-peed-id">{{peerId}}</div>
   //     <div class="tracking-to-arrow">→</div>
-  //     <div class="file-name">{{filename}}</div>
+  //     <div class="file-name">...</div>
   //     <div class="package-status">
   //       <div>Receiving</div>
   //       <div><span>0</span>%</div>
@@ -165,7 +163,7 @@ function addReceivingTrackingSheet(peerId, filename) {
 
   const peer = document.createElement("div");
   peer.setAttribute("id", "tracking-peer-id");
-  peer.innerText = peerId;
+  peer.innerText = peerId.toUpperCase();
 
   const arrow = document.createElement("div");
   arrow.setAttribute("class", "tracking-to-arrow");
@@ -173,7 +171,7 @@ function addReceivingTrackingSheet(peerId, filename) {
 
   const file = document.createElement("div");
   file.setAttribute("class", "file-name");
-  file.innerText = filename;
+  file.innerText = "...";
 
   const status = document.createElement("div");
   status.setAttribute("class", "package-status");
@@ -208,7 +206,19 @@ function addReceivingTrackingSheet(peerId, filename) {
   packageTracker.appendChild(trackingSheetWrapper);
 }
 
-function setPackageStatus(statusText, statusPercentage) {
+export function setTrackingSheetPeer(peerId) {
+  const trackingSheetPeerId = document.getElementById("tracking-peer-id");
+  trackingSheetPeerId.innerText = peerId;
+}
+
+export function setTrackingSheetFilename(filename, filesize) {
+  const trackingSheetFilename = document.querySelector(
+    ".tracking-sheet .file-name",
+  );
+  trackingSheetFilename.innerText = `(${formatFileSize(filesize)}) ${filename}`;
+}
+
+export function setPackageStatus(statusText, statusPercentage) {
   const packageStatus = document.querySelector(
     "#package-tracking > .tracking-sheet-wrapper > .tracking-sheet > .package-status",
   );
@@ -219,7 +229,7 @@ function setPackageStatus(statusText, statusPercentage) {
   packageStatusNumber.innerText = statusPercentage;
 }
 
-function showDownloadButton() {
+export function showDownloadButton() {
   const buttonContainer = document.createElement("div");
   buttonContainer.setAttribute("class", "tracking-sheet-button");
 
@@ -227,7 +237,11 @@ function showDownloadButton() {
   downloadButton.setAttribute("class", "button");
   downloadButton.innerText = "Download";
 
-  buttonContainer.appendChild(downloadButton);
+  const downloadAnchor = document.createElement("a");
+  downloadAnchor.setAttribute("id", "download-anchor");
+
+  downloadAnchor.appendChild(downloadButton);
+  buttonContainer.appendChild(downloadAnchor);
 
   const trackingSheet = document.querySelector(
     "#package-tracking > .tracking-sheet-wrapper > .tracking-sheet",
@@ -237,7 +251,7 @@ function showDownloadButton() {
   trackingSheet.appendChild(buttonContainer);
 }
 
-function addConfirmationPrompt(peerId) {
+export function addConfirmationPrompt(peerId) {
   // <div class="confirmation-prompt">
   //   <div>
   //     Send file to <b><span id="peer-id-confirmation">{{peerId}}</span></b>?
@@ -284,7 +298,7 @@ function addConfirmationPrompt(peerId) {
   trackingSheetWrapper.appendChild(confirmationPrompt);
 }
 
-function scrollToPackageTracking() {
+export function scrollToPackageTracking() {
   const packageTracker = document.getElementById("package-tracking");
   packageTracker.scrollIntoView(true);
 }
