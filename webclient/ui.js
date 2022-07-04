@@ -1,11 +1,12 @@
-const fileName = document.getElementById("file-name");
-
-const fileInput = document.getElementById("file-input");
-fileInput.addEventListener("change", () => {
-  fileName.innerText = `(${formatFileSize(fileInput.files[0].size)}) ${
-    fileInput.files[0].name
-  }`;
-});
+export function prepareFileInput() {
+  const fileName = document.getElementById("file-name");
+  const fileInput = document.getElementById("file-input");
+  fileInput.onchange = () => {
+    fileName.innerText = `(${formatFileSize(fileInput.files[0].size)}) ${
+      fileInput.files[0].name
+    }`;
+  };
+}
 
 export function formatFileSize(bytes) {
   let size = bytes;
@@ -226,7 +227,7 @@ export function setPackageStatus(statusText, statusPercentage) {
   const packageStatusNumber = packageStatus.children[1].children[0];
 
   packageStatusText.innerText = statusText;
-  packageStatusNumber.innerText = statusPercentage;
+  packageStatusNumber.innerText = Math.min(statusPercentage.toFixed(0), 100);
 }
 
 export function showDownloadButton() {
