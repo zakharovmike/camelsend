@@ -28,9 +28,10 @@ let dataChannel = null;
 let peerConnectionOccupied = false;
 let rallyCounter = 0;
 
-// A safe assumption of 16 KiB per message
-// https://developer.mozilla.org/en-US/docs/Web/API/WebRTC_API/Using_data_channels#understanding_message_size_limits
-const CHUNK_SIZE = 16384;
+// The upper limit for outgoing messages, 256 KiB, set by Chromium
+// https://chromium.googlesource.com/external/webrtc/+/master/net/dcsctp/public/dcsctp_options.h#68
+// https://hg.mozilla.org/mozilla-central/file/tip/netwerk/sctp/datachannel/DataChannelProtocol.h#l23
+const CHUNK_SIZE = 262_144;
 let receivingFileName;
 let receivingFileSize;
 let receivingBuffer = [];
@@ -345,11 +346,49 @@ function createPeerConnection() {
   };
 }
 
-// Sending is limited to a single file less than 16 KiB in size (sent in one go)
-async function sendFile(channel) {
-  channel.send(await file.arrayBuffer());
-  ui.setPackageStatus("Sending", 100);
-  channel.send(JSON.stringify({ type: "end-of-file" }));
+function sendFile(channel) {
+  // Chromium sets the lower bound for the maximum outgoing buffer size at 2,000,000 bytes
+  // https://chromium.googlesource.com/external/webrtc/+/master/net/dcsctp/public/dcsctp_options.h#88
+  const sendBufferMaxSize = 2_000_000;
+  // The outgoing buffer can hold seven (7) 256 KiB messages.
+  // This threshold provides the outgoing buffer a headroom of three (3) messages before being replenished.
+  const sendBufferAmountLowThreshold = sendBufferMaxSize - 3 * CHUNK_SIZE;
+
+  channel.bufferedAmountLowThreshold = sendBufferAmountLowThreshold;
+  // Once there is enough headroom in the outgoing buffer, start filling it again
+  channel.onbufferedamountlow = () => readSlice(offset);
+
+  let offset = 0;
+
+  // Use a FileReader to sequentially read chunks of the file.
+  // This avoids reading the whole file at once, which would load it into memory.
+  // This would be bad, especially when the file is large, because it is slow
+  // and makes the client unresponsive.
+  const fileReader = new FileReader();
+
+  // Once a chunk is read, add it to the outgoing buffer if there is room for it
+  fileReader.onload = (e) => {
+    if (channel.bufferedAmount < sendBufferMaxSize - CHUNK_SIZE) {
+      channel.send(e.target.result);
+      offset += e.target.result.byteLength;
+
+      ui.setPackageStatus("Sending", offset / file.size * 100);
+
+      if (offset < file.size) {
+        readSlice(offset);
+      } else {
+        channel.send(JSON.stringify({ type: "end-of-file" }));
+      }
+    }
+  };
+
+  const readSlice = () => {
+    const slice = file.slice(offset, offset + CHUNK_SIZE);
+    fileReader.readAsArrayBuffer(slice);
+  };
+
+  // Set the process in motion
+  readSlice(offset);
 }
 
 function main() {
