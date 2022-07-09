@@ -9,6 +9,7 @@ import * as ui from "./ui.js";
 const hostname = "localhost:8000";
 
 let id = null;
+let token = null;
 
 let serverConnection = null;
 
@@ -140,7 +141,7 @@ function connectToServer() {
   serverConnection.onopen = () => {
     ui.toggleServerConnectionStatusOn();
     serverConnection.send(
-      JSON.stringify({ type: "register-connection", id: id }),
+      JSON.stringify({ type: "register-connection", id: id, token: token }),
     );
   };
 
@@ -393,6 +394,7 @@ function sendFile(channel) {
 
 function main() {
   id = document.getElementById("id").innerText;
+  token = document.getElementById("id").dataset.token;
 
   form = document.querySelector(".form");
   form.onsubmit = onFormSubmit;
